@@ -1,23 +1,33 @@
 <script setup>
-import { ref, watch } from 'vue'
+
 import router, { isAuthenticated } from '../router/index.js'
-import { useRouter } from 'vue-router'
-</SCRIPT>
+
+const Logout = () => {
+  isAuthenticated.value = false
+  router.push({ name: 'Login' })
+}
+</script>
+
 <template>
   <!-- Using Bootstrap's Header template (starter code) -->
   <!-- https://getbootstrap.com/docs/5.0/examples/headers/ -->
   <div class="container">
     <header class="d-flex justify-content-center py-3">
       <ul class="nav nav-pills">
-        <li class="nav-item">
+        <li class="nav-item" v-if="!isAuthenticated">
           <router-link to="/login" class="nav-link" active-class="active" aria-current="page">Login</router-link>
         </li>
-
+        <li class="nav-item" v-else>
+          <button class="nav-link btn btn-link disabled">Login</button>
+        </li>
         <li class="nav-item">
           <router-link to="/" class="nav-link" active-class="active" aria-current="page">Home (Week 5)</router-link>
         </li>
         <li class="nav-item" v-if = "isAuthenticated">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>
+        </li>
+        <li class="nav-item" v-if = "isAuthenticated">
+          <button class="nav-link btn btn-link" @click ="Logout">Logout</button>
         </li>
       </ul>
     </header>
