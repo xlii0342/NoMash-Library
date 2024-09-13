@@ -1,11 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import router, { isAuthenticated } from '../router/index.js'
 import { useRouter } from 'vue-router'
-
-const user = 'user'
-const pwd = 'user'
-const myRouter =useRouter()
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import Button from 'primevue/button' // 正确导入 PrimeVue Button 组件
 
 const formData = ref({
   username: '',
@@ -13,15 +11,17 @@ const formData = ref({
 })
 
 const submitForm = () => {
-    if(formData.value.username === user && formData.value.password ===pwd){
-        isAuthenticated.value = true
-        router.push({ name: 'About' })   
-    } else {  
-        alert("error")
-    }
+  const userEmail = formData.value.username
+  const userPassword = formData.value.password
+  signInWithEmailAndPassword(getAuth(), userEmail, userPassword)
+    .then((data) => {
+      isAuthenticated.value = true
+      router.push({ name: 'About' })
+    })
+    .catch((error) => {
+      alert(error.code)
+    })
 }
- 
-
 </script>
 
 <template>
@@ -31,7 +31,7 @@ const submitForm = () => {
       <div class="col-md-8 offset-md-2">
         <h1 class="text-center">🗄️ W5. Library Login Form</h1>
         <p class="text-center">
-          Allowe user to login to our Library System
+          Allow user to login to our Library System
         </p>
         <form @submit.prevent="submitForm">
           <div class="row mb-3">
@@ -46,17 +46,23 @@ const submitForm = () => {
           </div>
           <div class="row mb-3">
             <div class="col-md-6 col-sm-6 offset-3">
-                <label for="password" class="form-label">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  v-model="formData.password"/>
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="formData.password"/>
             </div>
           </div>
           
           <div class="text-center">
             <button type="submit" class="btn btn-primary me-2">Login</button>
+          </div>
+          <div class="text-center mt-4">
+            if you don't have account, Click 
+            <router-link to=/firesignup><Button label="Here" class="p-button-link" /> </router-link> 
+            
+            to create new one
           </div>
         </form>
       </div>
@@ -70,9 +76,6 @@ const submitForm = () => {
   max-width: 80vw;
   margin: 0 auto;
   padding: 20px;
-  /* background-color: #e0bfbf; */
   border-radius: 10px;
 }
-
-
 </style>
