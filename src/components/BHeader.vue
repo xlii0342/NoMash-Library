@@ -1,10 +1,20 @@
 <script setup>
 
 import router, { isAuthenticated } from '../router/index.js'
+import { getAuth, signOut } from 'firebase/auth';
 
-const Logout = () => {
-  isAuthenticated.value = false
-  router.push({ name: 'Login' })
+const auth =getAuth()
+const Logout = () => { 
+  signOut(auth).then(() => {
+  console.log(isAuthenticated.value)  
+  alert("Sign out!!")
+  isAuthenticated.value = null
+  router.push({ name: 'Login' 
+  })  
+  }).catch((error)=>{
+    alert(error.code)
+  })
+  
 }
 </script>
 

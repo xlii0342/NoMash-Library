@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import router, { isAuthenticated } from '../router/index.js'
 import { useRouter } from 'vue-router'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import Button from 'primevue/button' // 正确导入 PrimeVue Button 组件
+import Button from 'primevue/button' 
 
 const formData = ref({
   username: '',
@@ -15,13 +15,16 @@ const submitForm = () => {
   const userPassword = formData.value.password
   signInWithEmailAndPassword(getAuth(), userEmail, userPassword)
     .then((data) => {
-      isAuthenticated.value = true
+      console.log(getAuth().currentUser)
+      isAuthenticated.value = getAuth().currentUser
       router.push({ name: 'About' })
     })
     .catch((error) => {
       alert(error.code)
     })
 }
+
+
 </script>
 
 <template>
@@ -29,9 +32,9 @@ const submitForm = () => {
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">🗄️ W5. Library Login Form</h1>
+        <h1 class="text-center">🗄️ Firenase Login Form</h1>
         <p class="text-center">
-          Allow user to login to our Library System
+          Allow user to login to our System
         </p>
         <form @submit.prevent="submitForm">
           <div class="row mb-3">

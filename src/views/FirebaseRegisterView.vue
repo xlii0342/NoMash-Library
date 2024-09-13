@@ -1,31 +1,80 @@
 <template>
-  <h1>Create an Account</h1>
-  <p><input type="text" placeholder="Email" v-model="email" /></p>
-  <p><input type="password" placeholder="Password" v-model="password" /></p>
-  <p><button @click="register">Save to Firebase</button></p>
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2">
+        <h1 class="text-center">🗄️ Firebase Sign up Form</h1>
+        <p class="text-center">
+          Allow user to create an account to our System
+        </p>
+        <form @submit.prevent="submitForm">
+          <div class="row mb-3">
+            <div class="col-md-6 col-sm-6 offset-3">
+              <label for="username" class="form-label">Username</label>
+              <input
+                type="text"
+                class="form-control" 
+                id="username"
+                v-model="formData.username"/>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6 col-sm-6 offset-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                v-model="formData.password"/>
+            </div>
+          </div>
+          
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary me-2">Sign up</button>
+          </div>
+          <div class="text-center mt-4">
+            If youhave an account, click 
+            <router-link to="/login">Here</router-link>
+            to create a new one.
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "vue-router"; // 只使用 useRouter
-import { isAuthenticated } from '../router/index.js'; // 只保留 isAuthenticated 的导入
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth"; 
+import { useRouter } from "vue-router"; 
+import { isAuthenticated } from '../router/index.js'; 
 
-const email = ref("");
-const password = ref("");
 const auth = getAuth();
-const router = useRouter(); // 保留这个 router 的定义
+const router = useRouter();
+const formData = ref({
+  username: '', 
+  password: ''
+})
 
-const register = () => {
-  createUserWithEmailAndPassword(auth, email.value, password.value)
+const submitForm = () => {
+  const userEmail = formData.value.username;
+  const userPassword = formData.value.password;
+  createUserWithEmailAndPassword(auth, userEmail, userPassword) 
     .then((data) => {
-      isAuthenticated.value = true; // 成功注册后设置 isAuthenticated
-      router.push({ name: 'About' }); // 重定向到 'About' 页面
+      isAuthenticated.value = auth.currentUser
+      router.push({ name: 'About' });
     })
     .catch((error) => {
-      console.log(error.code); // 打印错误信息
+      alert(error.code);
     });
 };
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 80vw;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+}
+</style>

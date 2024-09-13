@@ -6,7 +6,7 @@ import FirebaseRegisterView from '../views/FirebaseRegisterView.vue'
 import LoginWithFirebaseView from '@/views/LoginWithFirebaseView.vue'
 import {ref} from 'vue'
 
-const isAuthenticated = ref(false)
+const isAuthenticated = ref(null)
 
 const routes = [
   {
