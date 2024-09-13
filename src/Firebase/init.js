@@ -16,11 +16,10 @@ const firebaseConfig = {
   appId: "1:220600255992:web:698d05c75044ef1501020d"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 
-// 初始化 Firestore 数据库
+
 const db = getFirestore(app)
 
 export default db
