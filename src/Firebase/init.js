@@ -1,13 +1,26 @@
-import {initializeApp} from "firebase/app"
-import {getFirestore} from 'firebase/firestore'
+
+import { getFirestore } from "firebase/firestore";
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDjcoUJgGDheZAPW86PeRmjtp7BoeVIhd8",
-    authDomain: "week7-xinyu-29876.firebaseapp.com",
-    projectId: "week7-xinyu-29876",
-    storageBucket: "week7-xinyu-29876.appspot.com",
-    messagingSenderId: "195580207290",
-    appId: "1:195580207290:web:be4cba03a83edd03072283"
-  };
-initializeApp(firebaseConfig)
-const db = getFirestore()
+  apiKey: "AIzaSyBAWsN9T9fAvXrW_xc1u7-7-0oYS4YQMHA",
+  authDomain: "week7xinyuli.firebaseapp.com",
+  projectId: "week7xinyuli",
+  storageBucket: "week7xinyuli.appspot.com",
+  messagingSenderId: "220600255992",
+  appId: "1:220600255992:web:698d05c75044ef1501020d"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
+// 初始化 Firestore 数据库
+const db = getFirestore(app)
+
 export default db

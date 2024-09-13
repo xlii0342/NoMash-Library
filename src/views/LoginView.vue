@@ -32,7 +32,7 @@ const submitForm = () => {
   <div class="container mt-5">
     <div class="row">
       <div class="col-md-8 offset-md-2">
-        <h1 class="text-center">🗄️ Firenase Login Form</h1>
+        <h1 class="text-center">🗄️ Firebase Login Form</h1>
         <p class="text-center">
           Allow user to login to our System
         </p>
