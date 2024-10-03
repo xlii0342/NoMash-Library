@@ -1,7 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue'
-import DataTable from 'primevue/datatable'
-import Column from 'primevue/column'
+import { ref, watch } from 'vue';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
+import { collection, addDoc } from 'firebase/firestore'; // 导入模块化 API
+import { db } from '../firebase/init.js'; // 从初始化文件中导入 Firestore 实例
 
 const formData = ref({
   username: '',
@@ -11,30 +13,45 @@ const formData = ref({
   reason: '',
   gender: '',
   suburb: 'Clayton'
-})
+});
 
-const submittedCards = ref([])
-const haveFriend = ref(null)
+const submittedCards = ref([]);
+const haveFriend = ref(null);
 
-const submitForm = () => {
-  validateName(true)
-  validatePassword(true)
-  if (!errors.value.username && !errors.value.password) {
-    submittedCards.value.push({ ...formData.value })
-    clearForm()
+// 表单提交函数
+const submitForm = async () => {
+  validateName(true);
+  validatePassword(true);
+  if (!errors.value.username && !errors.value.password && !errors.value.confirmPassword) {
+    try {
+      // 将用户数据添加到 Firestore 中的 'users' 集合
+      await addDoc(collection(db, 'users'), { ...formData.value });
+
+      // 本地保存数据用于显示
+      submittedCards.value.push({ ...formData.value });
+      clearForm(); // 清空表单
+      alert('User registered successfully and saved to Firestore!');
+    } catch (error) {
+      console.error('Error adding document: ', error);
+      alert('Error saving user data to Firestore.');
+    }
   }
-}
+};
 
+// 清空表单
 const clearForm = () => {
   formData.value = {
     username: '',
     password: '',
+    confirmPassword: '',
     isAustralian: false,
     reason: '',
-    gender: ''
-  }
-}
+    gender: '',
+    suburb: 'Clayton'
+  };
+};
 
+// 表单验证逻辑
 const errors = ref({
   username: null,
   password: null,
@@ -42,61 +59,63 @@ const errors = ref({
   resident: null,
   gender: null,
   reason: null
-})
+});
 
 const validateName = (blur) => {
   if (formData.value.username.length < 3) {
-    if (blur) errors.value.username = 'Name must be at least 3 characters'
+    if (blur) errors.value.username = 'Name must be at least 3 characters';
   } else {
-    errors.value.username = null
+    errors.value.username = null;
   }
-}
+};
 
 const validatePassword = (blur) => {
-  const password = formData.value.password
-  const minLength = 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasLowercase = /[a-z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
+  const password = formData.value.password;
+  const minLength = 8;
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
   if (password.length < minLength) {
-    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
+    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`;
   } else if (!hasUppercase) {
-    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.'
+    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.';
   } else if (!hasLowercase) {
-    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.'
+    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.';
   } else if (!hasNumber) {
-    if (blur) errors.value.password = 'Password must contain at least one number.'
+    if (blur) errors.value.password = 'Password must contain at least one number.';
   } else if (!hasSpecialChar) {
-    if (blur) errors.value.password = 'Password must contain at least one special character.'
+    if (blur) errors.value.password = 'Password must contain at least one special character.';
   } else {
-    errors.value.password = null
+    errors.value.password = null;
   }
-}
+};
+
 const validateConfirmPassword = (blur) => {
   if (formData.value.password !== formData.value.confirmPassword) {
-    if (blur) errors.value.confirmPassword = 'Passwords do not match.'
+    if (blur) errors.value.confirmPassword = 'Passwords do not match.';
   } else {
-    errors.value.confirmPassword = null
+    errors.value.confirmPassword = null;
   }
-}
+};
 
 const validateReason = (blur) => {
   if (formData.value.reason.length < 10) {
-    if (blur) errors.value.reason = 'Name must be at least 10 characters'
+    if (blur) errors.value.reason = 'Reason must be at least 10 characters';
   } else {
-    errors.value.reason = null
+    errors.value.reason = null;
   }
-  if(formData.value.reason.includes('friend')){
-    haveFriend.value = 'Great to have a friend'
+  if (formData.value.reason.includes('friend')) {
+    haveFriend.value = 'Great to have a friend';
   } else {
-    haveFriend.value = null
+    haveFriend.value = null;
   }
-}
-watch(()=>formData.value.reason, ()=>{
-  validateReason(true)
-})
+};
+
+watch(() => formData.value.reason, () => {
+  validateReason(true);
+});
 </script>
 
 <template>
@@ -130,7 +149,7 @@ watch(()=>formData.value.reason, ()=>{
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
-              </select>   
+              </select>
             </div>
           </div>
           <div class="row mb-3">
@@ -142,7 +161,8 @@ watch(()=>formData.value.reason, ()=>{
                   id="password"
                   @blur="() => validatePassword(true)"
                   @input="() => validatePassword(false)"
-                  v-model="formData.password"/>
+                  v-model="formData.password"
+                />
                 <div v-if="errors.password" class="text-danger">{{ errors.password }}</div>
               </div>
               <div class="col-md-6 col-sm-6">

@@ -1,46 +1,54 @@
 <script setup>
-import { ref } from 'vue'
-import { isAuthenticated } from '../router/index.js'
-import { useRouter } from 'vue-router'
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
-import db from '../firebase/init'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { isAuthenticated } from '../router/index.js'; // 从路由文件中导入认证状态
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'; // 使用模块化导入
+import { doc, getDoc } from 'firebase/firestore'; // 从 Firestore 导入必要方法
+import { db } from '../firebase/init'; // 确保 Firestore 实例正确导入
 import Button from 'primevue/button';
 
-const router = useRouter()
+const router = useRouter(); // 路由实例
 
 const formData = ref({
-    username: '',
-    password: '',
-})
+  username: '',
+  password: '',
+});
 
+// 表单提交函数
 const submitForm = async () => {
-    const userEmail = formData.value.username
-    const userPassword = formData.value.password
+  const userEmail = formData.value.username.trim();
+  const userPassword = formData.value.password.trim();
 
-    try {
-    
-        const { user } = await signInWithEmailAndPassword(getAuth(), userEmail, userPassword)
+  // 检查用户输入
+  if (!userEmail || !userPassword) {
+    alert('Please enter both email and password.');
+    return;
+  }
 
-      
-        const userRef = doc(db, 'users', user.uid)
-        const userSnap = await getDoc(userRef)
+  try {
+    // 使用 Firebase Authentication 登录
+    const { user } = await signInWithEmailAndPassword(getAuth(), userEmail, userPassword);
 
-        if (userSnap.exists()) {
-            const userData = userSnap.data()
-            isAuthenticated.value = {
-                user: user,
-                role: userData.role,  
-            }
-            console.log(`Logged in as ${userData.role}`)
-            router.push({ name: 'About' })  
-        } else {
-            console.error('No user document found in Firestore')
-        }
-    } catch (error) {
-        alert(error.code)
+    // 获取 Firestore 中用户的角色信息
+    const userRef = doc(db, 'users', user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      isAuthenticated.value = {
+        user: user,
+        role: userData.role,  
+      };
+      console.log(`Logged in as ${userData.role}`);
+      router.push({ name: 'About' }); // 登录成功后跳转
+    } else {
+      console.error('No user document found in Firestore');
     }
-}
+  } catch (error) {
+    console.error('Error logging in:', error);
+    alert(error.message);
+  }
+};
 </script>
 
 <template>
