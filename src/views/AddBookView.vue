@@ -20,7 +20,7 @@
 import { ref } from 'vue';
 import { collection, addDoc } from 'firebase/firestore';  // 从 Firestore 模块化导入
 import { db } from '../firebase/init.js';  // 确保 Firestore 实例已初始化
-
+import BookList from '@/components/icons/BookList.vue';
 
 const isbn = ref('');
 const name = ref('');
