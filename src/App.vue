@@ -1,7 +1,7 @@
 <script setup>
-import JSONLab from './components/JSONLab.vue'
+// import JSONLab from './components/JSONLab.vue'
 import BHeader from './components/icons/BHeader.vue';
-import LibraryRegistrationForm from './components/LibraryRegistrationForm.vue'
+// import LibraryRegistrationForm from './components/LibraryRegistrationForm.vue'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
 const route = useRoute();
