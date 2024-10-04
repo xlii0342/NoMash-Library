@@ -44,6 +44,11 @@ const logout = () => {
             Get Weather
           </router-link>
         </li>
+        <!-- <li class="nav-item">
+          <router-link to="/CountBookAPI" class="nav-link" active-class="active">
+            Count Book API
+          </router-link>
+        </li> -->
 
         <li class="nav-item" v-if="isAuthenticated">
           <router-link to="/about" class="nav-link" active-class="active">About</router-link>

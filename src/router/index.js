@@ -7,7 +7,8 @@ import FirebaseRegisterView from '../views/FirebaseRegisterView.vue'
 import AddBookView from '@/views/AddBookView.vue'
 import { ref } from 'vue'
 import WeatherView from '../views/WeatherView.vue'
-
+import CountBookAPI from '../views/CountBookAPI.vue';
+import GetAllBookAPI from '../views/GetAllBookAPI.vue';
 const isAuthenticated = ref(false)  
 
 const routes = [
@@ -54,7 +55,16 @@ const routes = [
     name: 'WeatherCheck',
     component: WeatherView
   },
-
+  {
+    path: '/CountBookAPI',
+    name: 'CountBookAPI',
+    component: CountBookAPI
+  },
+  {
+    path: '/GetAllBookAPI',
+    name: 'GetallBookAPI',
+    component: GetAllBookAPI
+  },
   {
     path: '/:catchMatch(.*)*',  
     redirect: { name: 'Home' }  

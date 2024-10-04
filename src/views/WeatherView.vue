@@ -30,7 +30,7 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'  
   import axios from 'axios'
   
   const city = ref('')
@@ -38,9 +38,9 @@
   const loading = ref(false)
   const error = ref(null)
   
-
   const apiKey = '4821635646567995fe1bf523624b0e41'
   
+
   const searchByCity = async () => {
     if (!city.value) {
       alert('Please enter a city name')
@@ -51,7 +51,7 @@
     error.value = null
     weatherData.value = null
   
-    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${apiKey}&units=metric`
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city.value}&appid=${apiKey}&units=metric` // 注意使用单位为 metric 以直接返回摄氏温度
   
     try {
       const response = await axios.get(url)
@@ -64,13 +64,51 @@
     }
   }
   
-  // 计算属性，用于获取图标URL和温度
+
+  const fetchCurrentLocationWeather = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`
+        await fetchWeatherData(url)
+      }, (err) => {
+        error.value = 'Unable to retrieve your location'
+        console.error(err)
+      })
+    } else {
+      error.value = 'Geolocation is not supported by this browser.'
+    }
+  }
+  
+
+  const fetchWeatherData = async (url) => {
+    loading.value = true
+    error.value = null
+    weatherData.value = null
+  
+    try {
+      const response = await axios.get(url)
+      weatherData.value = response.data
+    } catch (err) {
+      error.value = 'Error fetching weather data.'
+      console.error(err)
+    } finally {
+      loading.value = false
+    }
+  }
+  
+
   const temperature = computed(() => {
-    return weatherData.value ? weatherData.value.main.temp : null
+    return weatherData.value ? Math.floor(weatherData.value.main.temp) : null
   })
   
   const iconUrl = computed(() => {
     return weatherData.value ? `http://openweathermap.org/img/wn/${weatherData.value.weather[0].icon}@2x.png` : null
+  })
+  
+
+  onMounted(() => {
+    fetchCurrentLocationWeather()
   })
   </script>
   
@@ -90,7 +128,7 @@
   .search-bar {
     display: flex;
     justify-content: center;
-    margin-bottom: 15px; 
+    margin-bottom: 20px; 
   }
   
   .search-input {
