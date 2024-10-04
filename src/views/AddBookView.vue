@@ -18,33 +18,37 @@
 
 <script setup>
 import { ref } from 'vue';
-import { collection, addDoc } from 'firebase/firestore';  // 从 Firestore 模块化导入
-import { db } from '../firebase/init.js';  // 确保 Firestore 实例已初始化
-import BookList from '@/components/icons/BookList.vue';
+import axios from 'axios';
+import BookList from '../components/icons/BookList.vue'
+
+
+
 
 const isbn = ref('');
 const name = ref('');
 
 const addBook = async () => {
-    try {
-        const isbnNumber = Number(isbn.value);
-        if (isNaN(isbnNumber)) {
-            alert('ISBN must be a valid number');
-            return;
-        }
+  try {
+    const isbnNumber = Number(isbn.value);
 
-        // 使用 Firestore 模块化 API 添加书籍数据
-        await addDoc(collection(db, 'books'), {
-            isbn: isbnNumber,
-            name: name.value,
-        });
-
-        // 重置表单
-        isbn.value = '';
-        name.value = '';
-        alert('Book added successfully!');
-    } catch (error) {
-        console.error('Error adding book:', error);
+    if (isNaN(isbnNumber)) {
+      alert('ISBN must be a valid number');
+      return;
     }
-};
+
+    // 发送 POST 请求到 Cloud Function
+    await axios.post('https://addbook-c5cjgqv6fq-uc.a.run.app', {
+      isbn: isbnNumber,
+      name: name.value,
+    });
+
+    isbn.value = '';
+    name.value = '';
+    alert('Book added successfully!');
+  } catch (error) {
+    console.error('Error adding book:', error);
+    alert('Failed to add book');
+  }
+}
 </script>
+
