@@ -37,7 +37,7 @@ const addBook = async () => {
     }
 
     // 发送 POST 请求到 Cloud Function
-    await axios.post('https://addbook-c5cjgqv6fq-uc.a.run.app', {
+    await axios.post('https://addbook-zq4wg47vrq-uc.a.run.app', {
       isbn: isbnNumber,
       name: name.value,
     });
