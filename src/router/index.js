@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '../views/LoginView.vue'
 import HomeView from '../views/HomeView.vue'
 import AboutView from '../views/AboutView.vue'
-
+import GetBookCountView from '../views/GetBookCountView.vue'
 import FirebaseRegisterView from '../views/FirebaseRegisterView.vue'
 import AddBookView from '@/views/AddBookView.vue'
 import { ref } from 'vue'
@@ -42,6 +42,11 @@ const routes = [
       if (!isAuthenticated.value) next({ name: 'Login' })  
       else next()
     }
+  },
+  {
+    path: '/GetBookCount',
+    name: 'GetBookCount',
+    component: GetBookCountView
   },
 
   {
