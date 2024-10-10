@@ -10,7 +10,7 @@ import LibraryRegistrationForm from './components/LibraryRegistrationForm.vue'
   </header>
 
   <main>
-    <LibraryRegistrationForm />
+    <LibraryRegistrationForm /> //library
     <!-- <JSONLab /> -->
   </main>
 </template>
